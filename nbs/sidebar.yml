@@ -1,0 +1,6 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_core-Copy1.ipynb
+      - 00_playing_with_altair.ipynb

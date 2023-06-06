@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "dataviz_course"
+  site-url: "https://daniilgaltsev.github.io/dataviz_course"
+  description: "A project for a dataviz course"
+  repo-branch: main
+  repo-url: "https://github.com/daniilgaltsev/dataviz_course"
