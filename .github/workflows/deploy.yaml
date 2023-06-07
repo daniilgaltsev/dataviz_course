@@ -10,5 +10,8 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
+    env:
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
     runs-on: ubuntu-latest
     steps: [uses: fastai/workflows/quarto-ghp@master]
