@@ -5,4 +5,5 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://daniilgaltsev.github.io',
                 'git_url': 'https://github.com/daniilgaltsev/dataviz_course',
                 'lib_path': 'dataviz_course'},
-  'syms': {'dataviz_course.core': {'dataviz_course.core.foo': ('core-copy1.html#foo', 'dataviz_course/core.py')}}}
+  'syms': { 'dataviz_course.explore_data': { 'dataviz_course.explore_data.download_data': ( 'exploring_the_data.html#download_data',
+                                                                                            'dataviz_course/explore_data.py')}}}
