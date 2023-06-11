@@ -3,25 +3,25 @@
 # %% auto 0
 __all__ = ['download_path', 'dataset_suffix', 'download_data', 'prepare_dataset']
 
-# %% ../nbs/01_exploring_the_data.ipynb 4
+# %% ../nbs/01_exploring_the_data.ipynb 5
 import kaggle
 from pathlib import Path
 
-# %% ../nbs/01_exploring_the_data.ipynb 5
+# %% ../nbs/01_exploring_the_data.ipynb 6
 download_path = Path("../../tmp")
 download_path.mkdir(exist_ok=True)
 dataset_suffix = "ruchi798/data-science-job-salaries"
 
-# %% ../nbs/01_exploring_the_data.ipynb 8
+# %% ../nbs/01_exploring_the_data.ipynb 9
 import pandas as pd
 
-# %% ../nbs/01_exploring_the_data.ipynb 9
+# %% ../nbs/01_exploring_the_data.ipynb 10
 def download_data() -> pd.DataFrame:
     """Downloads the salaries dataset and reads it"""
     kaggle.api.dataset_download_files(dataset=dataset_suffix, path=download_path, unzip=True)
     return pd.read_csv(download_path / "ds_salaries.csv", index_col=0)
 
-# %% ../nbs/01_exploring_the_data.ipynb 28
+# %% ../nbs/01_exploring_the_data.ipynb 30
 def prepare_dataset(data=None):
     if data is None:
         data = download_data()
@@ -43,7 +43,7 @@ def prepare_dataset(data=None):
         "M": "50-250",
         "L": ">250"
     })
-    data["Working for a Foreign Company"] = data["employee_residence"] == data["company_location"]
+    data["Working for a Foreign Company"] = data["employee_residence"] != data["company_location"]
     data = data.astype({"work_year": str})
     data = data.drop(columns=["salary", "salary_currency", "remote_ratio", "company_size", "employment_type"])
     data = data.rename(columns={
