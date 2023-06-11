@@ -6,4 +6,6 @@ d = { 'settings': { 'branch': 'main',
                 'git_url': 'https://github.com/daniilgaltsev/dataviz_course',
                 'lib_path': 'dataviz_course'},
   'syms': { 'dataviz_course.explore_data': { 'dataviz_course.explore_data.download_data': ( 'exploring_the_data.html#download_data',
-                                                                                            'dataviz_course/explore_data.py')}}}
+                                                                                            'dataviz_course/explore_data.py'),
+                                             'dataviz_course.explore_data.prepare_dataset': ( 'exploring_the_data.html#prepare_dataset',
+                                                                                              'dataviz_course/explore_data.py')}}}
