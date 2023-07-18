@@ -1,0 +1,100 @@
+[
+  {
+    "objectID": "creating_visualization_prototypes.html",
+    "href": "creating_visualization_prototypes.html",
+    "title": "Creating Visualization Prototypes",
+    "section": "",
+    "text": "import altair as alt\nimport pandas as pd\nimport numpy as np\n\nfrom dataviz_course.explore_data import prepare_dataset\ndata = prepare_dataset()\ndata.head()\n\n\n\n\n\n\n\n\nWork Year\nExperience Level\nJob Title\nSalary (usd)\nEmployee Residence\nCompany Location\nOn-site/Remote\nNumber of Employees\nWorking for a Foreign Company\n\n\n\n\n0\n2020\nMid-level / Intermediate\nData Scientist\n79833\nDE\nDE\nOn-site\n&gt;250\nFalse\n\n\n1\n2020\nSenior-level / Expert\nMachine Learning Scientist\n260000\nJP\nJP\nOn-site\n&lt;50\nFalse\n\n\n2\n2020\nSenior-level / Expert\nBig Data Engineer\n109024\nGB\nGB\nHybrid\n50-250\nFalse\n\n\n3\n2020\nMid-level / Intermediate\nProduct Data Analyst\n20000\nHN\nHN\nOn-site\n&lt;50\nFalse\n\n\n4\n2020\nSenior-level / Expert\nMachine Learning Engineer\n150000\nUS\nUS\nHybrid\n&gt;250\nFalse"
+  },
+  {
+    "objectID": "creating_visualization_prototypes.html#company-location",
+    "href": "creating_visualization_prototypes.html#company-location",
+    "title": "Creating Visualization Prototypes",
+    "section": "Company Location",
+    "text": "Company Location\n\nalt.Chart(data).mark_circle().encode(\n    y=alt.Y(field=\"Salary (usd)\", type=\"quantitative\"),\n    x=alt.X(field=\"Company Location\", type=\"nominal\", sort=sort_max_salary),\n    tooltip=[\"Salary (usd)\", \"Job Title\", \"Employee Residence\", \"Number of Employees\"]\n).properties(height=HEIGHT*1.2, width=WIDTH, title=\"Company Location vs Salary\")"
+  },
+  {
+    "objectID": "creating_visualization_prototypes.html#working-for-a-foreign-company",
+    "href": "creating_visualization_prototypes.html#working-for-a-foreign-company",
+    "title": "Creating Visualization Prototypes",
+    "section": "Working for a Foreign Company",
+    "text": "Working for a Foreign Company\n\nalt.Chart(data).mark_bar().encode(\n    x=alt.X(field=\"Salary (usd)\", type=\"quantitative\", bin=alt.Bin(step=50000), scale=salary_scale),\n    y=\"count()\",\n    tooltip=[\"count()\"],\n    color=\"Working for a Foreign Company\"\n).properties(width=WIDTH, height=HEIGHT, title=\"Salary for Domestic or Foreign Employment\")\n\n\n\n\n\n\n\naverages = data.groupby(['Employee Residence', 'Working for a Foreign Company'])['Salary (usd)'].mean().reset_index()\naverages.head()\n\n\n\n\n\n\n\n\nEmployee Residence\nWorking for a Foreign Company\nSalary (usd)\n\n\n\n\n0\nAE\nFalse\n100000.000000\n\n\n1\nAR\nTrue\n60000.000000\n\n\n2\nAT\nFalse\n76738.666667\n\n\n3\nAU\nFalse\n108042.666667\n\n\n4\nBE\nFalse\n85699.000000\n\n\n\n\n\n\n\n\nchart = alt.Chart(averages).mark_line(point=True).encode(\n    x=alt.X('Working for a Foreign Company', type=\"nominal\"),\n    y=alt.Y('Salary (usd)', type=\"quantitative\"),\n    color='Employee Residence',  # Connect points based on Employee Residence\n    order='Employee Residence',  # Sort the lines based on Employee Residence\n    tooltip=[\"Salary (usd)\", \"Employee Residence\"]\n).properties(\n    title='Average Salary Comparison (Domestic vs. Foreign)',\n    width=WIDTH,\n    height=HEIGHT\n)\nchart"
+  },
+  {
+    "objectID": "creating_visualization_prototypes.html#company-size-and-experience",
+    "href": "creating_visualization_prototypes.html#company-size-and-experience",
+    "title": "Creating Visualization Prototypes",
+    "section": "Company Size and Experience",
+    "text": "Company Size and Experience\n\nselection = alt.selection(type=\"multi\", fields=[\"Number of Employees\"])\n\nscatter = alt.Chart(data).mark_circle().encode(\n    x=alt.X(field=\"Number of Employees\", type=\"nominal\", sort=alt.EncodingSortField(field=\"Salary (usd)\", op=\"max\")),\n    y=alt.Y(field=\"Salary (usd)\", type=\"quantitative\"),\n    color=\"Experience Level\",\n    tooltip=[\"Job Title\", \"Employee Residence\", \"Salary (usd)\"],\n    opacity=get_selection_opacity(selection)\n).add_selection(selection).properties(width=WIDTH*0.4, height=HEIGHT, title=\"Salary based on Company Size\")\n\nhistogram = alt.Chart(data).mark_bar().encode(\n    x=alt.X(field=\"Salary (usd)\", type=\"quantitative\", bin=alt.Bin(step=50000), scale=salary_scale),\n    y=\"count()\",\n    color=\"Experience Level\",\n    tooltip=[\"count()\"]\n).transform_filter(selection).properties(width=WIDTH*0.5, height=HEIGHT, title=\"Salary based on Experience Level\").interactive()\n\nscatter | histogram"
+  },
+  {
+    "objectID": "creating_visualization_prototypes.html#remote-work",
+    "href": "creating_visualization_prototypes.html#remote-work",
+    "title": "Creating Visualization Prototypes",
+    "section": "Remote Work",
+    "text": "Remote Work\n\nsalaries_chart = alt.Chart(data).mark_circle().encode(\n    x=alt.X(field=\"On-site/Remote\", type=\"nominal\"),\n    y=\"Salary (usd)\",\n    tooltip=[\"Salary (usd)\", \"Job Title\", \"Employee Residence\", \"Company Location\"]\n).properties(width=WIDTH, height=HEIGHT)\n\naverage_salaries_chart = alt.Chart(data).mark_line(color=\"black\").encode(\n    x=alt.X(field=\"On-site/Remote\", type=\"nominal\"),\n    y=alt.Y(\"Salary (usd)\", type=\"quantitative\", aggregate=\"mean\", axis=alt.Axis(title=\"Salary (usd)\")),\n).properties(width=WIDTH, height=HEIGHT, title=\"Salaries for Different Work Types\")\n\nsalaries_chart + average_salaries_chart"
+  },
+  {
+    "objectID": "creating_visualization_prototypes.html#yearly-changes",
+    "href": "creating_visualization_prototypes.html#yearly-changes",
+    "title": "Creating Visualization Prototypes",
+    "section": "Yearly Changes",
+    "text": "Yearly Changes\n\nsalaries_chart = alt.Chart(data).mark_circle().encode(\n    x=\"Work Year\",\n    y=\"Salary (usd)\",\n    tooltip=[\"Job Title\", \"Employee Residence\", \"Company Location\"]\n).properties(width=WIDTH, height=HEIGHT)\n\naverage_salaries_chart = alt.Chart(data).mark_line(color=\"black\").encode(\n    x=alt.X(field=\"Work Year\", type=\"nominal\"),\n    y=alt.Y(\"Salary (usd)\", type=\"quantitative\", aggregate=\"mean\", axis=alt.Axis(title=\"Salary (usd)\")),\n).properties(width=WIDTH, height=HEIGHT, title=\"Salaries in each Year\")\n\nsalaries_chart + average_salaries_chart"
+  },
+  {
+    "objectID": "playing_with_altair.html",
+    "href": "playing_with_altair.html",
+    "title": "Playing with altair",
+    "section": "",
+    "text": "import warnings\n\nwarnings.filterwarnings(\"ignore\")\n\n\nimport altair as alt\nimport pandas as pd\nimport numpy as np\n\n\nnp.random.seed(1103)\nx = np.random.normal(size=(100,))\ny = x * 2.3 - 0.2 + np.random.normal(size=(100,))\nx.shape, y.shape\n\n((100,), (100,))\n\n\n\ndf = pd.DataFrame(dict(x=x, y=y))\ndf.head()\n\n\n\n\n\n\n\n\nx\ny\n\n\n\n\n0\n0.340156\n2.077685\n\n\n1\n-0.934960\n-2.127999\n\n\n2\n-0.172338\n-1.254177\n\n\n3\n-1.547774\n-5.233604\n\n\n4\n-0.145707\n-2.202302\n\n\n\n\n\n\n\n\nalt.Chart(df).mark_circle().encode(\n    x=\"x\",\n    y=\"y\"\n).interactive()\n\n\n\n\n\n\n\ndf[\"feat1\"] = np.random.randint(0, 3, 100)\ndf[\"feat1\"] = df[\"feat1\"].astype(str)\ndf[\"feat2\"] = df.x &gt; 0\ndf.head()\n\n\n\n\n\n\n\n\nx\ny\nfeat1\nfeat2\n\n\n\n\n0\n0.340156\n2.077685\n0\nTrue\n\n\n1\n-0.934960\n-2.127999\n1\nFalse\n\n\n2\n-0.172338\n-1.254177\n2\nFalse\n\n\n3\n-1.547774\n-5.233604\n1\nFalse\n\n\n4\n-0.145707\n-2.202302\n0\nFalse\n\n\n\n\n\n\n\n\nalt.Chart(df).mark_circle().encode(\n    x=\"x\",\n    y=\"y\",\n    color=\"feat1\",\n    tooltip=[\"feat2\"]\n).interactive()"
+  },
+  {
+    "objectID": "exploring_the_data.html",
+    "href": "exploring_the_data.html",
+    "title": "Exploring the Data",
+    "section": "",
+    "text": "For this project I am using a dataset about salaries for data related jobs (data engineering, data science, ML, DL, etc.). The raw data comes from ai-jobs.net. The dataset can be found here"
+  },
+  {
+    "objectID": "exploring_the_data.html#observations",
+    "href": "exploring_the_data.html#observations",
+    "title": "Exploring the Data",
+    "section": "Observations",
+    "text": "Observations\n\nThe company location has a large effect on the salary\nMost people work in the same location as their residence, but if you are able to get a position in a foreign company you are highly likely to earn much more than in your home country, though, still less than if you were located in the same country\nUnsurprisingly, the more experience you have, the more you get paid, but there are a couple of things depending on the company size\n\nIf you have little or medium amount of experience, it doesn’t really matter what the size of the company is\nIf you are senior, you will not earn as much if you are working for a small company\n\nFor lower paying position all companies have a similar distribution of salaries, however, medium and large companies provide a large proportion of jobs. For the higher paying jobs, you almost have to work in middle to large sized companies\nAvailable opportunities for both remote and on-site seem to be roughly the same, but hybrid jobs might not have as many top paying ones\nCompared to 2020, there are more high paying jobs and fewer low paying ones\n\nNow, with the key observations selected, we can focus on making good visualization for them. We are going to do that in the next notebook, but, for now, we can prepare the dataset for that.\n\nsource\n\nprepare_dataset\n\n prepare_dataset (data=None)\n\n\nprepare_dataset().head()\n\n\n\n\n\n\n\n\nWork Year\nExperience Level\nJob Title\nSalary (usd)\nEmployee Residence\nCompany Location\nOn-site/Remote\nNumber of Employees\nWorking for a Foreign Company\n\n\n\n\n0\n2020\nMid-level / Intermediate\nData Scientist\n79833\nDE\nDE\nOn-site\n&gt;250\nFalse\n\n\n1\n2020\nSenior-level / Expert\nMachine Learning Scientist\n260000\nJP\nJP\nOn-site\n&lt;50\nFalse\n\n\n2\n2020\nSenior-level / Expert\nBig Data Engineer\n109024\nGB\nGB\nHybrid\n50-250\nFalse\n\n\n3\n2020\nMid-level / Intermediate\nProduct Data Analyst\n20000\nHN\nHN\nOn-site\n&lt;50\nFalse\n\n\n4\n2020\nSenior-level / Expert\nMachine Learning Engineer\n150000\nUS\nUS\nHybrid\n&gt;250\nFalse"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Dataviz Course Project",
+    "section": "",
+    "text": "This project contains a series of notebooks which go over the process of preparing data visualization and improving them after evaluation. The general process can be described like this:\n\nLearning the basics of Altair\nExploring the data to come up with possible interesting insights\nPreparing the initial visualization for evalution\nPerforming the evaluation and improving the visualization based on the received feedback\n\nThe overview of the project and conclusions are written in the final notebook."
+  },
+  {
+    "objectID": "evaluation_and_overview.html",
+    "href": "evaluation_and_overview.html",
+    "title": "Evaluation and Overview",
+    "section": "",
+    "text": "For this project I wanted to try to present the information about data jobs in a way that it would be easier to make judgements on the potential salary based on your and company’s location, if it’s remote and your seniority. For this I’ve made a series of visualizations which were later evaluated by getting feedback from people working in data related jobs. Based on that feedback I’ve made some changes to the visualization and present them below.\n\n\nThe data for this project comes from a dataset of salaries for data related jobs. The raw data comes from ai-jobs.net and the dataset can be found on Kaggle. The data consists of 607 positions over 3 years (2020 - 2022). In addition to the salary and the year each position also has basic information about the company and the type of job.\n\n\n\nBased on the information provided in the dataset and preliminary exploration I wanted to make visualizations which would allow both to show the findings that I found interesting and to think about the data without directly working with it. This line of thought allowed me to select 5 areas which had an important effect on the salary and which I wanted to showcase:\n\nCompany Location\nWorking for a Foreign Company\nCompany Size and Experience\nRemote Work\nYearly Changes\n\n\n\n\nThe 5 areas listed above were the key considerations in choosing what kind of data relationships to visualize and how to do that. While these areas are still quite broad, they already provide enough of a base to start building visualization that allow to get some insight into them. However, due to the open-endedness it’s still important to show a little bit more information in order to allow people to find their own insights.\nBased on that I’ve tried to balance simplicity and expressivity of visualizations. One of the main ways of achieving that was showing distributions of averages. While these visualizations are a bit harder to interpret, I thought that the shortcoming was justified because of the technological literacy of the target audience and the expressivity of visualizations. I believe that the feedback received during the evaluation confirms this.\n\n\n\nIn order to evaluate the visualizations, I’ve decided to show them to three people who have worked in data related jobs and listen to their feedback. The evaluation was structred in the following way:\n\nFirst, I told the general topic of the visualizations\nSecondly, they looked through each visualization while telling their thoughts on them\nAfter that I explained what each visualization was aimed to show and we had a final discussion about them\n\n\n\nBased on the received feedback I’ve condensed them into brief reviews of each visualization:\n\nCompany Location: generally good and clear, but would like more data points for some countries\nWorking for a Foreign Company:\n\nsalary distributions: not clear what’s trying to show/compare, the tail is difficult to see\naverage salary: not readable at all\n\nCompany Size and Experience: the visualization is ok, but it’s not clear that it’s clickable/selectable\nRemote Work: everything’s good\nYearly Changes: everything’s good\n\nFrom this list it’s pretty straightforward to improve the visualizations by making them more clear."
+  },
+  {
+    "objectID": "evaluation_and_overview.html#overview",
+    "href": "evaluation_and_overview.html#overview",
+    "title": "Evaluation and Overview",
+    "section": "",
+    "text": "For this project I wanted to try to present the information about data jobs in a way that it would be easier to make judgements on the potential salary based on your and company’s location, if it’s remote and your seniority. For this I’ve made a series of visualizations which were later evaluated by getting feedback from people working in data related jobs. Based on that feedback I’ve made some changes to the visualization and present them below.\n\n\nThe data for this project comes from a dataset of salaries for data related jobs. The raw data comes from ai-jobs.net and the dataset can be found on Kaggle. The data consists of 607 positions over 3 years (2020 - 2022). In addition to the salary and the year each position also has basic information about the company and the type of job.\n\n\n\nBased on the information provided in the dataset and preliminary exploration I wanted to make visualizations which would allow both to show the findings that I found interesting and to think about the data without directly working with it. This line of thought allowed me to select 5 areas which had an important effect on the salary and which I wanted to showcase:\n\nCompany Location\nWorking for a Foreign Company\nCompany Size and Experience\nRemote Work\nYearly Changes\n\n\n\n\nThe 5 areas listed above were the key considerations in choosing what kind of data relationships to visualize and how to do that. While these areas are still quite broad, they already provide enough of a base to start building visualization that allow to get some insight into them. However, due to the open-endedness it’s still important to show a little bit more information in order to allow people to find their own insights.\nBased on that I’ve tried to balance simplicity and expressivity of visualizations. One of the main ways of achieving that was showing distributions of averages. While these visualizations are a bit harder to interpret, I thought that the shortcoming was justified because of the technological literacy of the target audience and the expressivity of visualizations. I believe that the feedback received during the evaluation confirms this.\n\n\n\nIn order to evaluate the visualizations, I’ve decided to show them to three people who have worked in data related jobs and listen to their feedback. The evaluation was structred in the following way:\n\nFirst, I told the general topic of the visualizations\nSecondly, they looked through each visualization while telling their thoughts on them\nAfter that I explained what each visualization was aimed to show and we had a final discussion about them\n\n\n\nBased on the received feedback I’ve condensed them into brief reviews of each visualization:\n\nCompany Location: generally good and clear, but would like more data points for some countries\nWorking for a Foreign Company:\n\nsalary distributions: not clear what’s trying to show/compare, the tail is difficult to see\naverage salary: not readable at all\n\nCompany Size and Experience: the visualization is ok, but it’s not clear that it’s clickable/selectable\nRemote Work: everything’s good\nYearly Changes: everything’s good\n\nFrom this list it’s pretty straightforward to improve the visualizations by making them more clear."
+  },
+  {
+    "objectID": "evaluation_and_overview.html#final-visualizations",
+    "href": "evaluation_and_overview.html#final-visualizations",
+    "title": "Evaluation and Overview",
+    "section": "Final Visualizations",
+    "text": "Final Visualizations\nHere are the visualizations, but with slight modifications based on the received feedback.\n\nCompany Location\n\n\n\n\n\n\n\n\n\nWorking for a Foreign Company\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCompany Size and Experience\n\n\n\n\n\n\n\n\n\nRemote Work\n\n\n\n\n\n\n\n\n\nYearly Changes"
+  },
+  {
+    "objectID": "evaluation_and_overview.html#conclusions",
+    "href": "evaluation_and_overview.html#conclusions",
+    "title": "Evaluation and Overview",
+    "section": "Conclusions",
+    "text": "Conclusions\nThe first round of evaluations proved to be quite successfull both showing the validity of the design choices and provding some insight into how to improve them. The use of more complex visualizations works, but requires careful considerations in order to not make them incomprehensible. When that’s done right, the visualization work particularly well when the target audience is more technical.\nThe visualizations themselves still have room for improvement, especially, in the aesthetic front. All in all, I believe that these visualization already work quite effectively and the audience is able to analyse the data and make interesting conclusions without directly interacting with it."
+  }
+]
