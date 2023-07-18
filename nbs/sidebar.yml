@@ -5,3 +5,4 @@ website:
       - 00_playing_with_altair.ipynb
       - 01_exploring_the_data.ipynb
       - 02_creating_visualization_prototypes.ipynb
+      - 03_evaluation_and_overview.ipynb
